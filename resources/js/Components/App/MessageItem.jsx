@@ -1,0 +1,58 @@
+import { formatMessageDateLong } from "@/helper";
+import { usePage } from "@inertiajs/react";
+import React from "react";
+import ReactMarkDown from "react-markdown";
+import UserAvatar from "./UserAvatar";
+import MessageAttachment from "./MessageAttachment";
+import MessageOptionDropdown from "./MessageOptionDropdown";
+
+const MessageItem = ({ message, attachmentClick }) => {
+    const currentUser = usePage().props.auth.user;
+
+    return (
+        <div
+            className={
+                "chat " +
+                (message.sender_id === currentUser.id
+                    ? " chat-end"
+                    : " chat-start")
+            }
+        >
+            {<UserAvatar user={message.sender} />}
+            <div className="chat-header">
+                {message.sender_id !== currentUser.id && message.group_id
+                    ? message.sender.name
+                    : ""}
+                <time className="text-xs opacity-50 ml-2">
+                    {formatMessageDateLong(message.created_at)}
+                </time>
+            </div>
+
+            <div
+                className={
+                    "chat-bubble relative " +
+                    (message.sender_id === currentUser.id
+                        ? " chat-bubble-info"
+                        : "")
+                }
+            >
+                {message.sender_id == currentUser.id && (
+                    <MessageOptionDropdown message={message} />
+                )}
+                <MessageAttachment
+                    attachments={message.attachments}
+                    attachmentClick={attachmentClick}
+                />
+                {message.message !== null && (
+                    <div className="chat-message">
+                        <div className="chat-message-content">
+                            <ReactMarkDown>{message.message}</ReactMarkDown>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default MessageItem;
