@@ -154,8 +154,8 @@ function Home({ messages = null, selectedConversation = null }) {
     return (
         <>
             {!messages && (
-                <div className="flex flex-col gap-8 justify-center items-center text-center h-full opacity-35">
-                    <div className="text-2xl md:text:4xl p-16 text-slate-200">
+                <div className="flex flex-col gap-4 justify-center items-center text-center h-full opacity-35">
+                    <div className="text-2xl md:text:4xl text-slate-200">
                         Please select conversation to start chatting
                     </div>
                     <ChatBubbleLeftRightIcon className="w-32 h-32 inline-block" />

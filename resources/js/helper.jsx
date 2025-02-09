@@ -1,4 +1,5 @@
 export const formatMessageDateLong = (date) => {
+    if (date === null) return "";
     const now = new Date();
     const inputDate = new Date(date);
 
@@ -30,6 +31,7 @@ export const formatMessageDateLong = (date) => {
 };
 
 export const formatMessageDateShort = (date) => {
+    if (date === null) return "";
     const now = new Date();
     const inputDate = new Date(date);
 
@@ -47,11 +49,6 @@ export const formatMessageDateShort = (date) => {
         });
     }
 
-    return inputDate.toLocaleDateString("MM", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-    });
 };
 
 export const isToday = (date) => {

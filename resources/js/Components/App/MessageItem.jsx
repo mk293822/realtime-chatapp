@@ -9,6 +9,8 @@ import MessageOptionDropdown from "./MessageOptionDropdown";
 const MessageItem = ({ message, attachmentClick }) => {
     const currentUser = usePage().props.auth.user;
 
+    const date = formatMessageDateLong(message.created_at);
+
     return (
         <div
             className={
@@ -23,9 +25,7 @@ const MessageItem = ({ message, attachmentClick }) => {
                 {message.sender_id !== currentUser.id && message.group_id
                     ? message.sender.name
                     : ""}
-                <time className="text-xs opacity-50 ml-2">
-                    {formatMessageDateLong(message.created_at)}
-                </time>
+                <time className="text-xs opacity-50 ml-2">{date}</time>
             </div>
 
             <div

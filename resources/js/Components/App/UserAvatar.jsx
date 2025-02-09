@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 const UserAvatar = ({ user, online = null, profile = false }) => {
     let onlineClass =
@@ -6,11 +6,13 @@ const UserAvatar = ({ user, online = null, profile = false }) => {
 
     const sizeClass = profile ? " w-40 " : " w-8 ";
 
+    const avatar = useMemo(() => user.avatar_url, [user.avatar_url]);
+
     if (user.avatar_url) {
         return (
             <div className={`chat-image avatar  ${onlineClass}`}>
                 <div className={`rounded-full  ${sizeClass}`}>
-                    <img src={user.avatar_url} />
+                    <img src={avatar} />
                 </div>
             </div>
         );

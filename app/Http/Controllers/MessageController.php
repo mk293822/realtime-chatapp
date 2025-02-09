@@ -101,7 +101,8 @@ class MessageController extends Controller
             Group::updateGroupWithMessage($group_id, $message);
         }
 
-        SocketMessage::dispatch($message);
+        $status = "send";
+        SocketMessage::dispatch($message, $status, null);
 
         return new MessageResource($message);
     }
@@ -121,7 +122,12 @@ class MessageController extends Controller
             $conversation = Conversation::where('last_message_id', $message->id)->first();
         }
 
+        $status = "delete";
+
+        $deleted_message = $message;
+
         $message->delete();
+        $lastMessage = null;
 
         if ($group) {
             $group = Group::find($group->id);
@@ -132,6 +138,8 @@ class MessageController extends Controller
             $lastMessage = $conversation->lastMessage;
         }
 
-        return response()->json(['message' => $lastMessage ? new MessageResource($lastMessage) : null], 200);
+        SocketMessage::dispatch($deleted_message, $status, $lastMessage);
+
+        return response()->json(['message' => $lastMessage !== null ? new MessageResource($lastMessage) : null], 200);
     }
 }

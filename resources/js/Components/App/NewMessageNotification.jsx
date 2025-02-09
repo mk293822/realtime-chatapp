@@ -21,7 +21,7 @@ const NewMessageNotification = () => {
     }, [on]);
 
     return (
-        <div className="toast toast-top toast-start min-w-[280px]">
+        <div className="toast toast-top toast-start min-w-[280px] z-[100]">
             {toasts.map((toast, index) => (
                 <div
                     key={toast.uuid}

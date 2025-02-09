@@ -1,18 +1,20 @@
-import { usePage } from "@inertiajs/react";
+import {router, usePage} from "@inertiajs/react";
 import React, { useContext, useEffect, useState } from "react";
 import { PencilSquareIcon } from "@heroicons/react/20/solid";
 import TextInput from "@/Components/TextInput";
 import ConversationItem from "@/Components/App/ConversationItem";
 import { useEventBus } from "@/EventBus";
+import GroupModal from "@/Components/App/GroupModal";
 
 const ChatLayout = ({ children }) => {
     const page = usePage();
-    const { on } = useEventBus();
+    const { on, emit } = useEventBus();
     const conversations = page.props.conversations;
     const selectedConversation = page.props.selectedConversation;
     const [onlineUsers, setOnlineUsers] = useState({});
     const [localConversations, setLocalConversations] = useState([]);
     const [sortedConversations, setSortedConversations] = useState([]);
+    const [showGroupModal, setShowGroupModal] = useState(false);
 
     const isUserOnline = (userId) => onlineUsers[userId];
 
@@ -62,9 +64,25 @@ const ChatLayout = ({ children }) => {
     useEffect(() => {
         const offCreated = on("message.created", messageCreated);
         const offDeleted = on("message.deleted", messageDeleted);
+        const offGroupModalShow = on("GroupModal.show", (group) =>
+            setShowGroupModal(true)
+        );
+
+        const offGroupDeleted = on("group.deleted", ({id, name})=>{
+            setLocalConversations((oldConversation)=>{
+                return oldConversation.filter((con)=> con.id != id)
+            })
+
+            emit("toast.show", `Group ${name} was deleted!`);
+
+                router.visit('/');
+
+        })
         return () => {
             offCreated();
             offDeleted();
+            offGroupModalShow();
+            offGroupDeleted();
         };
     }, [on]);
 
@@ -138,17 +156,6 @@ const ChatLayout = ({ children }) => {
                         selectedConversation ? "-ml-[100%] sm:ml-0" : ""
                     }`}
                 >
-                    <div className="flex items-center justify-between py-2 px-3 text-xl font-medium">
-                        My Conversation
-                        <div
-                            className="tooltip tooltip-left"
-                            data-tip="Create New Group"
-                        >
-                            <button className="text-gray-400 hover:text-gray-200">
-                                <PencilSquareIcon className="w-4 h-4 inline-block ml-2" />
-                            </button>
-                        </div>
-                    </div>
                     <div className="p-3">
                         <TextInput
                             onKeyUp={onSearch}
@@ -176,6 +183,10 @@ const ChatLayout = ({ children }) => {
                     {children}
                 </div>
             </div>
+            <GroupModal
+                show={showGroupModal}
+                onClose={() => setShowGroupModal(false)}
+            />
         </>
     );
 };
