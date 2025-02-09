@@ -78,7 +78,12 @@ const MessageInput = ({ conversation = null }) => {
                         (ProgressEvent.loaded / ProgressEvent.total) * 100
                     );
                     console.log(progress);
-                    setUploadProgress(progress);
+                    let attachments = formData.getAll("attachments[]");
+                    if (attachments !== null) {
+                        setUploadProgress(progress);
+                    } else {
+                        setUploadProgress(null);
+                    }
                 },
             })
             .then((response) => {
